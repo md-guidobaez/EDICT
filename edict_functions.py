@@ -41,14 +41,11 @@ try:
 except Exception as exp:
     raise IOError(f"Model not found. Download it from https://huggingface.co/openai/clip-vit-large-patch14. Install it in {model_path_clip}")
 
-# Getting our HF Auth token
-with open('hf_auth', 'r') as f:
-    auth_token = f.readlines()[0].strip()
 model_path_diffusion = "/content/stable-diffusion-v1-4"
 # Build our SD model
 try:
-    unet = UNet2DConditionModel.from_pretrained(model_path_diffusion, subfolder="unet", use_auth_token=auth_token, revision="fp16", torch_dtype=torch.float16)
-    vae = AutoencoderKL.from_pretrained(model_path_diffusion, subfolder="vae", use_auth_token=auth_token, revision="fp16", torch_dtype=torch.float16)
+    unet = UNet2DConditionModel.from_pretrained(model_path_diffusion, subfolder="unet", revision="fp16", torch_dtype=torch.float16)
+    vae = AutoencoderKL.from_pretrained(model_path_diffusion, subfolder="vae", revision="fp16", torch_dtype=torch.float16)
 except Exception as exp:
     raise IOError(f"Model not found. Download it from https://huggingface.co/CompVis/stable-diffusion-v1-4. Install it in {model_path_diffusion}")
 
