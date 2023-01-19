@@ -33,19 +33,24 @@ from torch import autocast
 from difflib import SequenceMatcher
 
 # Build our CLIP model
-model_path_clip = "openai/clip-vit-large-patch14"
-clip_tokenizer = CLIPTokenizer.from_pretrained(model_path_clip)
-clip_model = CLIPModel.from_pretrained(model_path_clip, torch_dtype=torch.float16)
-clip = clip_model.text_model
-
+model_path_clip = "/content/clip-vit-large-patch14"
+try:
+    clip_tokenizer = CLIPTokenizer.from_pretrained(model_path_clip)
+    clip_model = CLIPModel.from_pretrained(model_path_clip, torch_dtype=torch.float16)
+    clip = clip_model.text_model
+except Exception as exp:
+    raise IOError(f"Model not found. Download it from https://huggingface.co/openai/clip-vit-large-patch14. Install it in {model_path_clip}")
 
 # Getting our HF Auth token
 with open('hf_auth', 'r') as f:
     auth_token = f.readlines()[0].strip()
-model_path_diffusion = "CompVis/stable-diffusion-v1-4"
+model_path_diffusion = "/content/stable-diffusion-v1-4"
 # Build our SD model
-unet = UNet2DConditionModel.from_pretrained(model_path_diffusion, subfolder="unet", use_auth_token=auth_token, revision="fp16", torch_dtype=torch.float16)
-vae = AutoencoderKL.from_pretrained(model_path_diffusion, subfolder="vae", use_auth_token=auth_token, revision="fp16", torch_dtype=torch.float16)
+try:
+    unet = UNet2DConditionModel.from_pretrained(model_path_diffusion, subfolder="unet", use_auth_token=auth_token, revision="fp16", torch_dtype=torch.float16)
+    vae = AutoencoderKL.from_pretrained(model_path_diffusion, subfolder="vae", use_auth_token=auth_token, revision="fp16", torch_dtype=torch.float16)
+except Exception as exp:
+    raise IOError(f"Model not found. Download it from https://huggingface.co/CompVis/stable-diffusion-v1-4. Install it in {model_path_diffusion}")
 
 # Push to devices w/ double precision
 device = 'cuda'
